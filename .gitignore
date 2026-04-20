@@ -1,0 +1,22 @@
+node_modules/
+.next/
+.turbo/
+.vercel/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env files
+.env
+.env.*
+
+# OS / Editor
+.DS_Store
+.idea/
+.vscode/
+
+# Uploads local fallback (dev only)
+.uploads/

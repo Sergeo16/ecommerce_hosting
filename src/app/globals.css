@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground: oklch(0.15 0 0);
+  --background: oklch(0.98 0 0);
+}
+
+[data-theme="dark"],
+.dark {
+  --foreground: oklch(0.95 0 0);
+  --background: oklch(0.12 0 0);
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+/* Navbar : une seule ligne, pas de barre de défilement, dropdowns visibles */
+.navbar {
+  min-height: 3rem;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  flex-wrap: nowrap !important;
+  align-items: center;
+  display: flex;
+}
+/* Les dropdowns DaisyUI s’affichent au-dessus (z-index), pas de clip gênant */
+.navbar .navbar-start,
+.navbar .navbar-end {
+  align-items: center;
+  flex-shrink: 0;
+  min-height: 0;
+  overflow: visible; /* les menus déroulants restent visibles */
+}
+.navbar .navbar-end {
+  padding-right: 1rem;
+}
+@media (min-width: 640px) {
+  .navbar .navbar-end {
+    padding-right: 1.25rem;
+  }
+}
+@media (min-width: 1024px) {
+  .navbar .navbar-end {
+    padding-right: 1.5rem;
+  }
+}
+.navbar .navbar-center {
+  min-width: 0;
+  overflow: hidden;
+  flex-shrink: 1;
+}
+
+/* Page catalog : barre de recherche centrée occupant tout l'espace entre logo et onglets (sans .navbar-center pour éviter les conflits) */
+.catalog-navbar-search {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  display: flex !important;
+  align-items: stretch;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+.catalog-navbar-search .catalog-search-label {
+  flex: 1 1 0% !important;
+  width: 100% !important;
+  min-width: 120px !important;
+  max-width: none !important;
+  box-sizing: border-box;
+  display: flex !important;
+  align-items: center;
+}
+@media (min-width: 640px) {
+  .catalog-navbar-search .catalog-search-label {
+    min-width: 160px;
+  }
+}
+.catalog-navbar-search .catalog-search-label input {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  width: 0 !important;
+  box-sizing: border-box;
+}
+
+/* Menus déroulants au premier plan (au-dessus de la navbar sticky) */
+.dropdown-content,
+[class*="dropdown-content"] {
+  z-index: 110 !important;
+}
+
+/* DaisyUI themes déjà chargés via config */
