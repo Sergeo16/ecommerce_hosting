@@ -24,6 +24,15 @@ npm run dev
 - App : http://localhost:3000
 - **En local uniquement** : le seed crée un compte Super Admin de démo : `superadmin@marketplace.bj` / `Admin123!`. Ce compte **n’est jamais créé en production** (voir section Déploiement pour définir l’admin en prod).
 
+### Note importante (Prisma) : `DIRECT_URL`
+
+Le schéma Prisma utilise désormais:
+- `DATABASE_URL` : URL de connexion “app”
+- `DIRECT_URL` : URL de connexion “directe” (utile en prod serverless pour les migrations)
+
+En **local**, vous pouvez simplement mettre:
+- `DIRECT_URL` = `DATABASE_URL`
+
 ## Déploiement gratuit sur Vercel
 
 Pour quitter Render et héberger **gratuitement** sur Vercel, suivez le guide:

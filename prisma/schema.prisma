@@ -8,6 +8,9 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // En serverless (Vercel), on utilise souvent une URL "poolée" pour l'app
+  // et une URL "directe" pour les migrations Prisma.
+  directUrl = env("DIRECT_URL")
 }
 
 // ============ UTILISATEURS & RÔLES ============
