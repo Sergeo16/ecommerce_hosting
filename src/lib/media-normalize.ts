@@ -3,7 +3,13 @@
  * - Images : conversion en WebP, redimensionnement si trop grand (max 1920px, qualité 85)
  * - Garantit un format stable et léger pour le catalogue public.
  */
-import sharp from 'sharp';
+// IMPORTANT:
+// `sharp` est une dépendance native. Sur Vercel, si le binaire correspondant au runtime
+// (linux-x64) n'est pas présent, un import statique casse le module au chargement
+// et provoque un 500 sur `POST /api/supplier/upload`.
+//
+// On charge donc `sharp` dynamiquement et on fallback sur l'upload "tel quel"
+// si `sharp` n'est pas utilisable dans l'environnement.
 
 const MAX_DIMENSION = 1920;
 const WEBP_QUALITY = 85;
@@ -22,7 +28,41 @@ export async function normalizeImageBuffer(
   inputBuffer: Buffer,
   _inputMime?: string
 ): Promise<NormalizedImage> {
-  const pipeline = sharp(inputBuffer);
+  function mimeToExt(mime?: string): string {
+    const m = (mime ?? '').toLowerCase().split(';')[0].trim();
+    switch (m) {
+      case 'image/jpeg':
+        return '.jpg';
+      case 'image/png':
+        return '.png';
+      case 'image/gif':
+        return '.gif';
+      case 'image/webp':
+        return '.webp';
+      default:
+        return '.img';
+    }
+  }
+
+  // Chargement dynamique de `sharp` + fallback si indisponible.
+  let sharpFn: unknown;
+  try {
+    const mod = await import('sharp');
+    sharpFn = (mod as any).default ?? mod;
+  } catch (err) {
+    // Si on n'a pas le MIME d'origine, on ne peut pas construire un type/extension fiable.
+    // (Ex: `normalizeImageUrls()` appelle parfois sans _inputMime)
+    if (!_inputMime) throw err;
+
+    const contentType = _inputMime.split(';')[0].trim();
+    return {
+      buffer: inputBuffer,
+      contentType,
+      ext: mimeToExt(contentType),
+    };
+  }
+
+  const pipeline = (sharpFn as any)(inputBuffer);
   const meta = await pipeline.metadata();
   const width = meta.width ?? 0;
   const height = meta.height ?? 0;
